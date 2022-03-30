@@ -8,7 +8,7 @@ Latex code for the submission of my homeworks for COM-512.
 - Threshold for the apparition of subgraphs in random graphs
 - Apparition of *any* k-cycles in sufficiently large Erdòs Rény graphs
 
-## HM2 : R-Regular Graphs
+### HM2 : R-Regular Graphs
 
 * Striling's formula for double-factorials
 * R-connectivity of G(n,r)

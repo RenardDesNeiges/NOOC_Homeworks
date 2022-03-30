@@ -10,12 +10,17 @@
 \usepackage[ruled,vlined]{algorithm2e} %algoritms/pseudocode
 \usepackage{bm}
 
+\newcounter{thecnt}[section]
+\def\thecnt{\arabic{}}
+
 %% Theorem notation
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}{Corollary}[theorem]
-\newtheorem{claim}{Claim}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{problem}{Problem}[section]
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
 
 %% declaring abs so that it works nicely
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}%
@@ -53,13 +58,63 @@
 
 \begin{claim}
     Given that $n$ is even, using Stirling's formula, we claim that:
-    \[ (n-1)!! \approx \alpha n^{n/2}e^{-n/2} \]
+    \[ (n-1)!! \approx \alpha n^{n/2}e^{-n/2}, \]
+    for some $\alpha \in \mathbb{R},~\alpha>0$ to be determined.
 \end{claim}
+
+\begin{proof}
+    Recall that the double factorial of a number $n \in \mathbb{Z}$, denoted $n!!$, is given by the expression: 
+    \begin{align*}
+        n!! = \prod_{k=0}^{\frac{n}{2}} (n-2k) = n \cdot (n-2)  \cdot ... 3 \cdot 1 && \text{for an odd number,} \\
+        n!! = \prod_{k=0}^{\frac{n+1}{2}} (n-2k) = n \cdot (n-2)  \cdot ... 4 \cdot 2 && \text{for an even number.} 
+    \end{align*}
+    Since $n$ is even we have that $n-1$ is odd. Observe that the expression
+    \[ (n-1)!! = (n-1) \cdot (n-3)  \cdot ... 3 \cdot 1 \]
+    can be expressed as (let $n=2k$, by $n$ even $k\in\mathbb{Z}$): 
+    \begin{align*}
+        (n-1)!! = \frac{(n-1) \cdot (n-2) \cdot (n-3) \cdot ... 3 \cdot 2 \cdot 1}{(n-2) \cdot (n-4) \cdot ... 4 \cdot 2} \\
+        = \frac{(2k-1) \cdot (2k-2) \cdot (2k-3) \cdot ... 3 \cdot 2 \cdot 1}{(2k-2) \cdot (2k-4) \cdot ... 4 \cdot 2} = \frac{(2k-1)!}{2(k-1)!}.
+    \end{align*}
+    Which we reduce into:
+    \begin{align*}
+        (n-1)!! =  \frac{(2k-1)!}{2(k-1)!} = \frac{\frac{1}{n}*(n)!}{2(n/2)!*\frac{2}{n}} = \frac{1}{4} \frac{(n)!}{(n/2)!},
+    \end{align*}
+    by Stirling's formula we further get:
+    \begin{align*}
+        \frac{(n)!}{4(n/2)!} \approx  \frac{n^{n} e^{-n} \sqrt{2 \pi n}}{4(n^{n/2} e^{-n/2} \sqrt{\pi n})} = \frac{1}{2\sqrt{2}}n^{n/2}e^{-n/2},
+    \end{align*}
+    where $1/2\sqrt{2} = \alpha$.
+\end{proof}
 
 \newpage
 
-\section*{Exercise 2} r-connectivity for
+\section*{Exercise 2} 
 
+\begin{definition}
+    A graph $G=(V,E)$ is said to be $k$-connected if there are at least $k$ vertex disjoint path between any two vertices $u,v\in V$ in $G$.
+\end{definition}
+
+\begin{theorem}
+    (Connectivity of $G(n,r)$). For $r\geq 3$. $G(,r)$ is $r$-connected a.a.s. .
+\end{theorem}
+
+\begin{definition}
+    Partition the vertex set $V$ of the graph the graph $G=(V,E)$ into 3 $A,B,S$ disjoint partitions s.t. $A\cup S \cup B=V$. We say that the set $S\subset V$ \textbf{separates} $G$ if $\not \exists ~ (u,v) \in E$ s.t. $u\in A,~v\in B$. 
+\end{definition}
+
+\begin{remark}
+    If a graph $G=(V,E)$ is $k$ connected $\iff$ the size of the smallest set $S$ that separates $A$ and $B$ is $k$.
+\end{remark}
+
+\begin{proof} (of theorem 1)
+    We separate the proof into two subcases, pick an arbitrary large number $a_0 \in \mathbb{Z}^+$, we distinguish the proof between two components, the \textbf{small component case} for $a=|A|<a_0$ and the \textbf{large component case} $a=|A|>a_0$.
+    \linebreak
+
+    For the \textbf{small component case} the proof is included in the lecture notes.
+    \linebreak
+
+    For the \textbf{large component case} we use a proof similar to the case $2<a<a_0$ from the small component proof. Let $T\subseteq S$ be the subset of vertices in $S$ adjacent to $A$, let $t=|T|$ and $s=|S|$. To show our result, lower-bound $t$ and therefore $s$.
+\end{proof}
 
 \newpage
 
