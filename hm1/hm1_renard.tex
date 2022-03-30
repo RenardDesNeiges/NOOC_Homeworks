@@ -1,0 +1,165 @@
+\documentclass[11pt]{article}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{epigraph} %quotes
+\usepackage{amssymb} %math symbols
+\usepackage{mathtools} %more math stuff
+\usepackage{amsthm} %theorems, proofs and lemmas
+\usepackage[ruled,vlined]{algorithm2e} %algoritms/pseudocode
+\usepackage{bm}
+
+%% Theorem notation
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{problem}{Problem}[section]
+
+%% declaring abs so that it works nicely
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the 
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+% Marges
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=5.5in
+\textheight=9.0in
+\headsep=0.5in
+
+
+\title{Homework Set 1 - Networks out of Control}
+\date{\today}
+\author{Titouan Renard}
+
+\begin{document}
+\maketitle	
+
+\section*{Exercise 1}
+
+
+\begin{claim}
+    Given $G(n,p)$ an Erdòs-Rény Graph. We claim that if $p\geq \frac{\log n}{\sqrt{n}}$ then, $\text{diag}(G) \leq 2$.
+\end{claim}
+
+\begin{proof}
+    The proof starts in a similar way to \textbf{theorem 3.4} from the lecture notes. Let $X$ denote the number of vertices $u,v$ with no common neighbor $w$. Observe that if  $X \rightarrow 0$ a.a.s , then the claim is true (as in \textbf{theorem 3.4}). We will thus proceed by showing that $p\geq \frac{\log n}{\sqrt{n}}$ implies $X \rightarrow 0$. \\
+
+    First, observe that for a given pair of vertices $u,v$ and some other vertex $w$, the probability that $w$ is a common neighbor of $u,v$ is given by $p^2$ (by definition of the Erdòs-Rény model). The probability that $w$ is \textit{not} a common neighbor is thus given by $1-p^2$. Observe that since there are $n-2$ vertices in $G$ (excluding $u,v$) the probability that $u,v$ have no common neighbor is given by $(1-p^2)^{n-1}$. \\
+    
+    Let $X_{u,v}$ be the indicator variable that takes value $1$ if $u,v,$ have no common neighbor and $0$ else, we have that $\mathbb{E}[X_{u,v}] = \mathbb{P}[u,v \text{ have no common neighbor}] = (1-p^2)^{n-1}$. Let $X$ be the indicator variable of the number of $u,v$ pairs that have no common neighbors, we have $X = \sum_{u,v \in V} X_{u,v}$. By the linearity of expectation we get that $\mathbb{E}[X] = \mathbb{E}[\sum_{u,v \in V} X_{u,v}] = \sum_{u,v \in V} \mathbb{E}[X_{u,v}]$. Using the first moment method (\textbf{theorem 3.2}) we argue that showing that $\mathbb{E}[X] \rightarrow 0$ is sufficient to show that $X\rightarrow 0$ a.a.s .
+
+    \begin{align*}
+        \mathbb{E}[X] = \sum_{u,v \in V} \mathbb{E}[X_{u,v}] = \sum_{u,v \in V} (1-p^2)^{n-2} = \binom{n}{2} \cdot (1-p^2)^{n-2}\\
+    \end{align*}
+
+    Which is where we start making wild upper bound guesses. 
+
+    \begin{align*}
+        \binom{n}{2} \cdot (1-p^2)^{n-2} \leq c \cdot n^2 \cdot (1-p^2)^{n} \\
+        \leq c \cdot n^2 \cdot e^{-p^2 \cdot n}.
+    \end{align*}
+
+    We now need to show that $c \cdot n^2 \cdot e^{-p^2 \cdot n} \rightarrow 0$, to do so we take the log on both sides and argue that showing $\log \left(c \cdot n^2 \cdot e^{-p^2 \cdot n} \right) \rightarrow -\infty$ is sufficient. 
+
+    \begin{align*}
+        \log \left(c \cdot n^2 \cdot e^{-p^2\cdot n} \right) \rightarrow -\infty \\
+        2 \log (n) - n \cdot p^2 \rightarrow -\infty \\
+    \end{align*}
+
+    Which is true if for some $c\in \mathbb{R}_+$ we have $p \geq \frac{\log n}{\sqrt{n}}$.
+\end{proof}
+
+\newpage
+
+\section*{Exercise 2} Consider two families of random graphs $G_n = G(n,p)$ with $p = n^\frac{-6}{5}$ and independent $H_n = G(\log n, (\log n)^\frac{-8}{7})$. 
+
+\begin{claim}
+$H_n$ does not appear in $G_n$ for large $n$. 
+\end{claim}
+
+\begin{proof}
+    First, we look at $H_n$ and identify a graph that is likely to appear in it, for readability we let $m  = (\log n)$ and consider:
+    \[ H_m = G(m,m^\frac{-8}{7}) = H_n = G(\log n, (\log n)^\frac{-8}{7}).\]
+
+    Consider a tree $T = (V_T,E_T)$ with $|V_T|=7$ and $|E_T|= 6$. Observe that by that \textbf{theorem 3.6} from the lecture notes the function $t_H(m) = m^\frac{-7}{6}$ is a threshold function for the apparition $T$ in $H$. And that we have: 
+    \[ \frac{p_H(m)}{t(m) } = \frac{m^\frac{-8}{7}}{m^\frac{-7}{6}} \rightarrow + \infty. \]
+
+    So $T$ is a subgraph of $H$ a.a.s. Now using that result observe that since $G_n(n,n^\frac{-6}{5})$ we can use that same threshold function to show that since 
+
+    \[ \frac{p_G(n)}{t(n) } = \frac{n^\frac{-6}{5}}{m^\frac{-7}{6}} \rightarrow 0, \]
+
+    $T$ is not a subgraph of $G_n$ a.a.s., now just observe that since $T \not \subset G$ and $T \subset H$ we have $T \subset H \not \subset G$.
+
+\end{proof}
+
+\newpage
+
+\section*{Exercise 3}
+
+Fix $k\in \mathbb{Z}_+$ \textbf{theorem 3.6} implies that $t_c(n)$ provides a threshold for the appearance of some cycles (i.e. if $k$-cycles appear in $G$ then $G$ contains some cycles and ${p(n)}/{t_c(n)} \rightarrow \infty$), but we still need to show that ${p(n)}/{t_c(n)} \rightarrow 0 ~ \forall ~k \in \mathbb{Z}_+ ~, k > 3$ in order to prove the claim from the datum.
+
+\begin{claim}
+    $t_c(n) = \frac{1}{n}$ is such that if $\frac{p(n)}{t_c(n)} = np(n) \rightarrow 0$ then the graph $G$ has no cycle.
+\end{claim}
+
+\begin{proof}
+    We will prove our claim by computing the expected number of cycles (indicated by the random variable $X_n$) for any $n$. Observe that:
+
+    \[ \mathbb{P}(\text{$G$ has a cycle}) \leq \mathbb{E}[X_n].\]
+
+    Now observe that we have:
+    \begin{align*}
+        \mathbb{E}[X_n] = \sum_{S \in T} \mathbb{E}[\bm{1}_{C_s}] = \sum_{k \geq 3} \sum_{S \in T_k}  \mathbb{P}(C_s)
+    \end{align*}
+
+    Where $T$ denotes the set of all subsets of the vertices $V$ of $G$ that are distinct in the sense that a unique cycle could occur (we don't double-count cycles), $T_k$ the set of all subsets of size $k$ of all the vertices of $V$ (in the same sense), $C_s$ the event that the subset $S$ is a cycle. Since we work with an Erdòs-Rény model we have that:
+
+    \begin{align*}
+        \mathbb{P}(C_s) = p^{|S|}.
+    \end{align*}
+
+    Now let's look at $|T_k|$, since sets are ordered we have $|T_k|=\binom{n}{k}k!\cdot\frac{1}{2k} = \frac{(k-1)!}{2}\binom{n}{k}$. \textit{There are $\binom{n}{k}$ sets of $k$ different vertices we can pick out of $n$, we need them to be ordered so we multiply that by $k!$, but we don't care about all ordering, cycle direction and starting vertex are of no importance se we divide by $2k$.} We thus have:
+    
+    \begin{align*}
+        \sum_{S \in T_k} \mathbb{P}(C_s) = \frac{(k-1)!}{2}\binom{n}{k}p^k.
+    \end{align*}
+
+    Which we can use to get an expression for the expected number of cycles:
+
+    \begin{align*}
+        \mathbb{E}[X_n] =  \sum_{k \geq 3} \frac{(k-1)!}{2}\binom{n}{k}p^k.
+    \end{align*}
+
+    Which we now bound using that $\binom{n}{k}k! \leq n^k$:
+
+    \begin{align*}
+        \mathbb{E}[X_n] =  \sum_{k \geq 3} \frac{(k-1)!}{2}\binom{n}{k}p^k 
+        \leq  \sum_{k \geq 3} k! \binom{n}{k}p^k \leq  \sum_{k \geq 3} n^k p^k.
+    \end{align*}
+
+    Which allows us to bound with a geometric series:
+
+    \begin{align*}
+        \mathbb{E}[X_n] \leq  \sum_{k \geq 3} (n p)^k = \sum_{k \geq 0} (n p)^k - \sum_{k \geq 0}^2 (n p)^k \\
+        = \frac{1}{1 - np} - \frac{1 - (np)^3}{1-np} = \frac{(np)^3}{1-np}.
+    \end{align*}
+
+    Now observe that ${p(n)}/{t_c(n)} \rightarrow 0$ is equivalent to $np(n) \rightarrow 0$, so $\mathbb{E}[X_n] \rightarrow 0$ which completes the proof.
+
+\end{proof}
+
+\end{document}
