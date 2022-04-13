@@ -1,0 +1,119 @@
+\documentclass[11pt]{article}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{epigraph} %quotes
+\usepackage{amssymb} %math symbols
+\usepackage{mathtools} %more math stuff
+\usepackage{amsthm} %theorems, proofs and lemmas
+\usepackage[ruled,vlined]{algorithm2e} %algoritms/pseudocode
+\usepackage{bm}
+
+\newcounter{thecnt}[section]
+\def\thecnt{\arabic{}}
+
+%% Theorem notation
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{lemma}{Lemma}
+\newtheorem{problem}{Problem}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+%% declaring abs so that it works nicely
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the 
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+% Marges
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=5.5in
+\textheight=9.0in
+\headsep=0.5in
+
+
+\title{Homework Set 3 - Networks out of Control}
+\date{\today}
+\author{Titouan Renard}
+
+\begin{document}
+\maketitle	
+
+\section*{Exercise 1}
+\subsection*{Question 1}
+
+
+\begin{claim}
+    Consider two increasing events $A_1$ and $A_2$ having equal probabilities. Show that: 
+    \begin{align}
+        \mathbb{P}_p(A_1) \geq 1 - \sqrt{1 - \mathbb{P}_p(A_1 \cup A_2)} . \label{claim1}
+    \end{align}
+\end{claim}
+
+\begin{proof}
+    Start from:
+    \begin{align*}
+        1 - \mathbb{P}_p(A_1 \cup A_2) = \mathbb{P}_p(\overline{A_1} \cap \overline{A_2}),
+    \end{align*}
+    now observing that if $A_i$ is increasing then $\overline{A_i}$ is decreasing, we have, by then FKG inequality (which holds for both increasing and decreasing events):
+    
+    \begin{align*}
+        \mathbb{P}_p(\overline{A_1} \cap \overline{A_2}) \geq \mathbb{P}_p(\overline{A_1}) \mathbb{P}_p(\overline{A_2}) = \mathbb{P}_p(\overline{A_1})^2, \\
+        1 - \mathbb{P}_p(A_1 \cup A_2) = \mathbb{P}_p(\overline{A_1} \cap \overline{A_2}) \geq \mathbb{P}_p(\overline{A_1})^2, \\
+        \sqrt{1 - \mathbb{P}_p(A_1 \cup A_2)} \geq \mathbb{P}_p(\overline{A_1}). \\
+        \mathbb{P}_p(A_1)  \geq 1 - \sqrt{1 - \mathbb{P}_p(A_1 \cup A_2)}. \\
+    \end{align*}
+\end{proof}
+
+\subsection*{Question 2} 
+\textit{Suppose $\mathbb{P}_p(A_1) = \mathbb{P}_p(A_2) > 0$ but $A_1$ increasing while $A_2$ is decreasing, is (\ref{claim1}) still true?}\\
+
+
+Pick a trivial example, consider a $2$-vertices (denoted $v_1$ and $v_2$) lattice with $p=1/2$ that an edge appears. Let $A$ denote the event that $\exists~ v_1 \longleftrightarrow v_2$ and $B$ $\nexists~ v_1 \longleftrightarrow v_2$. Observe that although $\mathbb{P}_p(A) = \mathbb{P}_p(B)$, $A$ is increasing and $B$ is decreasing. Now compute both sides of the inequality (\ref{claim1}).
+
+\begin{align*}
+    \text{left side} && \mathbb{P}_p(A) = 1/2 \\
+    \text{righta side} && 1 - \sqrt{1 - \mathbb{P}_p(A_1 \cup A_2)}  =  1 - \sqrt{1 - 1} = 1,
+\end{align*}
+observe that $1\geq 1/2$. This is a counter example.\\
+
+\textit{Below is the begining of a proof I had to go through to get the example, it clearly not required for the question feel free to ignore it.} \\
+
+One easy way to see why (\ref{claim1}) is true is is simply to observe that the FKG inequality stops holding which breaks the bound above. Our example is the following: we will get our example starting from the proof of \textbf{Theorem 8.2 (FKG Inequality)} from the lecture notes. Consider an increasing event $A$ and a decreasing event $B$. Let $X = \bm{1}_A$ and $X = \bm{1}_B$, thus $X$ is an increasing random variable and $Y$ a decreasing random variable. \\ %As in the case \textbf{Theorem 8.2} proof one can reformulate the FKG inequality as $\mathbb{E}[XY] \leq \mathbb{E}[X] \mathbb{E}[Y]$
+
+Pick $n=1$ so that $X$ and $Y$ are only function of the state $\omega(e_1)$ of the edge $e_1$. Pick any two states $\omega_1, \omega_2 \in \{0,1\}$. Since $X$ is increasing and $Y$ is decreasing we have: 
+\begin{align*}
+    (X(\omega_1)-X(\omega_2))(Y(\omega_1)-Y(\omega_2)) \leq 0
+\end{align*}
+
+with equality if $\omega_1 = \omega_2$. As, if $X(\omega_1)\geq X(\omega_2)$, one must have $Y(\omega_1)\leq Y(\omega_2)$ by the increasing-decreasing property (or vice-versa). Therefore: 
+
+\begin{align*}
+    0 \geq \sum_{\omega_1=0}^1 \sum_{\omega_2=0}^1 \overbrace{(X(\omega_1)-X(\omega_2))(Y(\omega_1)-Y(\omega_2))}^{\leq 0}  \overbrace{\mathbb{P}_p(\omega(e_1) = \omega_1)}^{\geq 0} \overbrace{\mathbb{P}_p(\omega(e_1) = \omega_2)}^{\geq 0}\\
+    = \sum_{\omega_1=0}^1 X(\omega_1)Y(\omega_1) \mathbb{P}_p(\omega(e_1) = \omega_1) +  \sum_{\omega_2=0}^1 X(\omega_2)Y(\omega_2) \mathbb{P}_p(\omega(e_1) = \omega_2) \\
+    -  \sum_{\omega_1=0}^1 \sum_{\omega_2=0}^1 (X(\omega_1)+X(\omega_2))(Y(\omega_1)-Y(\omega_2))  \mathbb{P}_p(\omega(e_1) = \omega_1) \mathbb{P}_p(\omega(e_1) = \omega_2)\\
+    = 2(\mathbb{E}_p[XY]-\mathbb{E}_p[X]\mathbb{E}_p[Y]).
+\end{align*}
+
+From which we get:
+\begin{align*}
+    0 \geq \mathbb{E}_p[XY]-\mathbb{E}_p[X]\mathbb{E}_p[Y]\\
+    \mathbb{E}_p[X]\mathbb{E}_p[Y] \geq \mathbb{E}_p[XY],
+\end{align*}
+which gives a "reversed" FKG inequality for the $n=1$ case. \\
+
+\end{document}
